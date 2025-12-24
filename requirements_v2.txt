@@ -1,0 +1,37 @@
+# Core FastAPI
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+python-multipart==0.0.6
+
+# Database
+sqlite3
+
+# HTTP & Requests
+requests==2.31.0
+
+# SQL Parsing & Validation
+sqlparse==0.4.4
+
+# Fuzzy Matching
+rapidfuzz==3.5.2
+
+# Voice Processing
+faster-whisper==1.0.3
+sounddevice==0.4.6
+numpy==1.24.3
+torch==2.1.0
+torchaudio==2.1.0
+
+# Voice Activity Detection
+silero-vad
+
+# Audio Denoising
+deepfilternet==0.5.6
+
+# Public Deployment (Optional)
+pyngrok==7.0.1
+
+# Testing (Optional)
+pytest==7.4.3
+httpx==0.25.2
