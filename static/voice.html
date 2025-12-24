@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Voice → SQL</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/static/style.css?v=final2" />
+</head>
+
+<body>
+
+<!-- EMPTY STATE -->
+<div id="emptyState" class="empty">
+  <h1>What’s on your mind?</h1>
+
+  <div class="prompt">
+    <textarea
+      id="emptyInput"
+      placeholder="Ask anything"
+      rows="1"
+    ></textarea>
+
+    <button class="icon" onclick="sendEmpty()">➤</button>
+    <button class="icon" onclick="startVoice()">🎤</button>
+  </div>
+</div>
+
+<!-- CHAT STATE -->
+<main id="chatApp" class="app hidden">
+  <section id="chat" class="chat"></section>
+
+  <footer class="input-bar">
+    <textarea
+      id="chatInput"
+      placeholder="Message…"
+      rows="1"
+    ></textarea>
+
+    <button class="icon" onclick="sendChat()">➤</button>
+    <button class="icon" onclick="startVoice()">🎤</button>
+  </footer>
+</main>
+
+<script>
+const endpoint = "/generate_sql";
+let started = false;
+
+/* =========================
+   STATE
+   ========================= */
+function switchToChat() {
+  if (started) return;
+  started = true;
+
+  document.getElementById("emptyState").classList.add("hidden");
+  document.getElementById("chatApp").classList.remove("hidden");
+}
+
+/* =========================
+   CHAT UI
+   ========================= */
+function addMessage(role, text) {
+  const chat = document.getElementById("chat");
+
+  const row = document.createElement("div");
+  row.className = `row ${role}`;
+
+  const bubble = document.createElement("div");
+  bubble.className = `bubble ${role}`;
+  bubble.textContent = text;
+
+  row.appendChild(bubble);
+  chat.appendChild(row);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+/* =========================
+   SEND LOGIC
+   ========================= */
+function sendEmpty() {
+  const input = document.getElementById("emptyInput");
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = "";
+  switchToChat();
+  send(text);
+}
+
+function sendChat() {
+  const input = document.getElementById("chatInput");
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = "";
+  send(text);
+}
+
+function send(text) {
+  addMessage("user", text);
+
+  fetch(endpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      question: text,
+      role: "admin"
+    })
+  })
+  .then(r => r.json())
+  .then(j => {
+    if (j.intent === "chat") {
+      addMessage("assistant", j.message);
+    } else if (j.intent === "sql") {
+      addMessage(
+        "assistant",
+        "SQL:\n" + j.sql +
+        (j.rows ? "\n\nRows:\n" + JSON.stringify(j.rows, null, 2) : "")
+      );
+    }
+  })
+  .catch(err => {
+    addMessage("assistant", "Request failed:\n" + err);
+  });
+}
+
+/* =========================
+   ENTER / SHIFT+ENTER
+   ========================= */
+function bindEnterToSend(textarea, sendFn) {
+  textarea.addEventListener("keydown", e => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendFn();
+    }
+  });
+}
+
+bindEnterToSend(
+  document.getElementById("emptyInput"),
+  sendEmpty
+);
+
+bindEnterToSend(
+  document.getElementById("chatInput"),
+  sendChat
+);
+
+/* =========================
+   VOICE
+   ========================= */
+function startVoice() {
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) return;
+
+  const rec = new SpeechRecognition();
+  rec.lang = "en-US";
+
+  rec.onresult = e => {
+    const text = e.results[0][0].transcript;
+    switchToChat();
+    send(text);
+  };
+
+  rec.start();
+}
+</script>
+
+</body>
+</html>

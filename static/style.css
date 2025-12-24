@@ -1,0 +1,176 @@
+:root {
+  --bg: #020617;
+  --panel: #020617;
+  --border: #1f2937;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+  --accent: #10a37f;
+
+  --user-bubble: #1f2937;
+  --assistant-bubble: #020617;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  background: radial-gradient(1200px 600px at 50% -10%, #111827, #020617);
+  font-family: system-ui, sans-serif;
+  color: var(--text);
+}
+
+/* =========================
+   EMPTY STATE
+   ========================= */
+.empty {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  text-align: center;
+}
+
+.empty h1 {
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+.prompt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #1f2937;
+  padding: 14px 18px;
+  border-radius: 999px;
+  width: min(700px, 90vw);
+}
+
+.prompt textarea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: white;
+  resize: none;
+  outline: none;
+  font-size: 1rem;
+}
+
+/* =========================
+   CHAT LAYOUT
+   ========================= */
+.app {
+  height: 100vh;
+  max-width: 1000px;
+  margin: auto;
+  padding: 16px;
+  display: grid;
+  grid-template-rows: 1fr auto;
+}
+
+/* =========================
+   CHAT
+   ========================= */
+.chat {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-bottom: 16px;
+}
+
+.row {
+  display: flex;
+}
+
+.row.user {
+  justify-content: flex-end;
+}
+
+.row.assistant {
+  justify-content: flex-start;
+}
+
+.bubble {
+  padding: 14px 16px;
+  border-radius: 16px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  max-width: 80%;
+}
+
+.bubble.user {
+  background: var(--user-bubble);
+}
+
+.bubble.assistant {
+  background: var(--assistant-bubble);
+  border: 1px solid var(--border);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  max-height: 45vh;
+  overflow: auto;
+}
+
+/* =========================
+   INPUT BAR
+   ========================= */
+.input-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 12px;
+}
+
+.input-bar textarea {
+  flex: 1;
+  resize: none;
+  background: #020617;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+  color: white;
+  outline: none;
+}
+
+/* Buttons */
+.icon {
+  border: none;
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-size: 1rem;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+}
+
+.icon:hover {
+  filter: brightness(1.1);
+}
+
+/* =========================
+   UTIL
+   ========================= */
+.hidden {
+  display: none !important;
+}
+
+/* =========================
+   SCROLLBARS
+   ========================= */
+*::-webkit-scrollbar {
+  width: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
